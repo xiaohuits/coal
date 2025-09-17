@@ -32,7 +32,7 @@
 #  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 #  POSSIBILITY OF SUCH DAMAGE.
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.22)
 set(CXX_DISABLE_WERROR TRUE)
 
 set(PROJECT_NAME coal)
@@ -496,6 +496,31 @@ if(COAL_BACKWARD_COMPATIBILITY_WITH_HPP_FCL)
           COMPONENT hpp-fcl-compatibility)
   include("${JRL_CMAKE_MODULES}/install-helpers.cmake")
   add_install_target(NAME hpp-fcl-compatibility COMPONENT hpp-fcl-compatibility)
+endif()
+
+# ——————————————————————————————————————————————
+# Bundle all of coal.dll’s runtime DLL dependencies on Windows
+# (requires CMake ≥ 3.14)
+# ——————————————————————————————————————————————
+if (WIN32 AND CMAKE_VERSION VERSION_GREATER_EQUAL "3.14")
+  # 1) Tell CMake where your installed coal.dll lives
+  set(_coal_dll "${CMAKE_INSTALL_PREFIX}/bin/coal.dll")
+
+  # 2) Gather all of coal.dll’s dependent DLLs
+  file(GET_RUNTIME_DEPENDENCIES
+    EXECUTABLES "${_coal_dll}"
+    DIRECTORIES
+      "${CMAKE_INSTALL_PREFIX}/bin"              # already-installed DLLs here
+      "$ENV{CONDA_PREFIX}/Library/bin"           # if using Pixi’s conda env
+    RESOLVED_DEPENDENCIES_VAR _coal_runtime_deps
+    # You can exclude system DLLs if you like:
+    #  EXCLUDE_SYSTEM_D ŁS ON
+  )
+
+  # 3) Install those DLLs beside coal.dll
+  install(PROGRAMS ${_coal_runtime_deps}
+          DESTINATION bin
+          OPTIONAL)  # won’t fail if some aren’t found
 endif()
 
 setup_project_finalize()
