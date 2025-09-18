@@ -38,21 +38,41 @@ scripts = ["development/scripts/pixi/activation.bat"]
 # We must avoid to set CMAKE_CXX_FLAGS because of WIN32
 # https://discourse.cmake.org/t/strictly-appending-to-cmake-lang-flags/6478
 configure = { cmd = [
-  "CXXFLAGS=$COAL_CXX_FLAGS",
   "cmake",
   "-G",
-  "Ninja",
+  "Visual Studio 17 2022",
+  "-A",
+  "x64",
   "-B",
   "build",
   "-S",
   ".",
   "-DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX",
   "-DCMAKE_BUILD_TYPE=$COAL_BUILD_TYPE",
-  "-DGENERATE_PYTHON_STUBS=$COAL_PYTHON_STUBS",
+  "-DGENERATE_PYTHON_STUBS=OFF",
+  "-DBUILD_PYTHON_INTERFACE=OFF",
   "-DCOAL_HAS_QHULL=$COAL_HAS_QHULL",
 ] }
-build = { cmd = "cmake --build build --target all", depends-on = ["configure"] }
-clean = { cmd = "rm -rf build" }
+build = { cmd = "cmake --build build --config Release", depends-on = ["configure"] }
+build_static_lib = { cmd = "cmake --build build --target coal_static --config Release", depends-on = ["configure"] }
+copy_static_headers = { cmd = [
+  "mkdir build_static\\include build_static\\lib 2>nul || echo Created directories",
+  "xcopy /E /I /Y include\\coal build_static\\include\\coal",
+  "if exist build\\include xcopy /E /Y build\\include build_static\\include"
+], depends-on = ["build_static_lib"] }
+copy_static_libs = { cmd = [
+  "copy build\\lib\\Release\\coal_static.lib build_static\\lib\\",
+  "copy .pixi\\envs\\default\\Library\\lib\\boost_chrono.lib build_static\\lib\\",
+  "copy .pixi\\envs\\default\\Library\\lib\\boost_thread.lib build_static\\lib\\",
+  "copy .pixi\\envs\\default\\Library\\lib\\boost_date_time.lib build_static\\lib\\",
+  "copy .pixi\\envs\\default\\Library\\lib\\boost_serialization.lib build_static\\lib\\",
+  "copy .pixi\\envs\\default\\Library\\lib\\boost_filesystem.lib build_static\\lib\\",
+  "copy .pixi\\envs\\default\\Library\\lib\\boost_system.lib build_static\\lib\\"
+], depends-on = ["copy_static_headers"] }
+build_static = { depends-on = ["copy_static_libs"] }
+clean = { cmd = [
+  "rm -rf build",
+  "rm -rf build_static"] }
 test = { cmd = "ctest --test-dir build --output-on-failure", depends-on = [
   "build",
 ] }
