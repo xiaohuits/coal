@@ -54,25 +54,7 @@ configure = { cmd = [
   "-DCOAL_HAS_QHULL=$COAL_HAS_QHULL",
 ] }
 build = { cmd = "cmake --build build --config Release", depends-on = ["configure"] }
-build_static_lib = { cmd = "cmake --build build --target coal_static --config Release", depends-on = ["configure"] }
-copy_static_headers = { cmd = [
-  "mkdir build_static\\include build_static\\lib 2>nul || echo Created directories",
-  "xcopy /E /I /Y include\\coal build_static\\include\\coal",
-  "if exist build\\include xcopy /E /Y build\\include build_static\\include"
-], depends-on = ["build_static_lib"] }
-copy_static_libs = { cmd = [
-  "copy build\\lib\\Release\\coal_static.lib build_static\\lib\\",
-  "copy .pixi\\envs\\default\\Library\\lib\\boost_chrono.lib build_static\\lib\\",
-  "copy .pixi\\envs\\default\\Library\\lib\\boost_thread.lib build_static\\lib\\",
-  "copy .pixi\\envs\\default\\Library\\lib\\boost_date_time.lib build_static\\lib\\",
-  "copy .pixi\\envs\\default\\Library\\lib\\boost_serialization.lib build_static\\lib\\",
-  "copy .pixi\\envs\\default\\Library\\lib\\boost_filesystem.lib build_static\\lib\\",
-  "copy .pixi\\envs\\default\\Library\\lib\\boost_system.lib build_static\\lib\\"
-], depends-on = ["copy_static_headers"] }
-build_static = { depends-on = ["copy_static_libs"] }
-clean = { cmd = [
-  "rm -rf build",
-  "rm -rf build_static"] }
+clean = { cmd = "rm -rf build"}
 test = { cmd = "ctest --test-dir build --output-on-failure", depends-on = [
   "build",
 ] }

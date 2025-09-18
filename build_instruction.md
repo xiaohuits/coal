@@ -20,18 +20,6 @@ pixi run configure
 cd build && cmake --build . --target coal_static --config Release
 ```
 
-### 3. Copy Dependencies
-Coal requires Boost libraries. Copy them from the pixi environment:
-```bash
-# Copy required Boost libraries from pixi environment
-copy ".pixi\envs\default\Library\lib\boost_chrono.lib" "build\lib\Release\"
-copy ".pixi\envs\default\Library\lib\boost_thread.lib" "build\lib\Release\"
-copy ".pixi\envs\default\Library\lib\boost_date_time.lib" "build\lib\Release\"
-copy ".pixi\envs\default\Library\lib\boost_serialization.lib" "build\lib\Release\"
-copy ".pixi\envs\default\Library\lib\boost_filesystem.lib" "build\lib\Release\"
-copy ".pixi\envs\default\Library\lib\boost_system.lib" "build\lib\Release\"
-```
-
 ### 4. Integration with Other Projects
 
 **Directory Structure:**
@@ -49,12 +37,12 @@ your-project/
 3. Generated headers under `build/include` to `your-project/libs/coal/include`
 4. **Boost libraries:**
    ```bash
-   copy "build\lib\Release\boost_chrono.lib" "your-project\libs\coal\lib\"
-   copy "build\lib\Release\boost_thread.lib" "your-project\libs\coal\lib\"
-   copy "build\lib\Release\boost_date_time.lib" "your-project\libs\coal\lib\"
-   copy "build\lib\Release\boost_serialization.lib" "your-project\libs\coal\lib\"
-   copy "build\lib\Release\boost_filesystem.lib" "your-project\libs\coal\lib\"
-   copy "build\lib\Release\boost_system.lib" "your-project\libs\coal\lib\"
+   copy ".pixi\envs\default\Library\lib\boost_chrono.lib" "your-project\libs\coal\lib\"
+   copy ".pixi\envs\default\Library\lib\boost_thread.lib" "your-project\libs\coal\lib\"
+   copy ".pixi\envs\default\Library\lib\boost_date_time.lib" "your-project\libs\coal\lib\"
+   copy ".pixi\envs\default\Library\lib\boost_serialization.lib" "your-project\libs\coal\lib\"
+   copy ".pixi\envs\default\Library\lib\boost_filesystem.lib" "your-project\libs\coal\lib\"
+   copy ".pixi\envs\default\Library\lib\boost_system.lib" "your-project\libs\coal\lib\"
    ```
 
 **CMakeLists.txt Integration:**
