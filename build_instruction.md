@@ -35,7 +35,9 @@ your-project/
 1. `build/lib/Release/coal_static.lib` to `your-project/libs/coal/lib`
 2. All headers under `include/coal` to `your-project/libs/coal/include`
 3. Generated headers under `build/include` to `your-project/libs/coal/include`
-4. **Boost libraries:**
+4. Eigen lib (header only) under `.pixi\envs\default\Library\include\eigen3` to `your-project\libs\eigen3`
+5. Boost lib under `.pixi/envs/default/Library/include/boost` to `/your-project/libs/boost`
+6. **Boost libraries:**
    ```bash
    copy ".pixi\envs\default\Library\lib\boost_chrono.lib" "your-project\libs\coal\lib\"
    copy ".pixi\envs\default\Library\lib\boost_thread.lib" "your-project\libs\coal\lib\"
@@ -44,6 +46,8 @@ your-project/
    copy ".pixi\envs\default\Library\lib\boost_filesystem.lib" "your-project\libs\coal\lib\"
    copy ".pixi\envs\default\Library\lib\boost_system.lib" "your-project\libs\coal\lib\"
    ```
+7. assimp lib
+   copy ".pixi\envs\default\Library\lib\assimp.lib" "your-project\libs\coal\lib\"
 
 **CMakeLists.txt Integration:**
 ```cmake
@@ -52,6 +56,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE COAL_STATIC)
 
 # Add include directory
 include_directories(${CMAKE_SOURCE_DIR}/libs/coal/include)
+include_directories(${CMAKE_SOURCE_DIR}/libs/boost)
+include_directories(${CMAKE_SOURCE_DIR}/libs/eigen3)
 
 # Add link libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE
@@ -61,5 +67,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
   ${CMAKE_SOURCE_DIR}/libs/coal/lib/boost_date_time.lib
   ${CMAKE_SOURCE_DIR}/libs/coal/lib/boost_serialization.lib
   ${CMAKE_SOURCE_DIR}/libs/coal/lib/boost_filesystem.lib
+  ${CMAKE_SOURCE_DIR}/libs/coal/lib/assimp.lib
 )
 ```
